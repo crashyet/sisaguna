@@ -1,0 +1,1 @@
+<img src="/storage/icon.png" alt="Sisa Guna Logo" class="aspect-square object-cover" {{ $attributes }}>
