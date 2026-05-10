@@ -19,6 +19,8 @@ class PaymentVerifyController extends Controller
     public function verify(Payment $payment)
     {
         abort_if($payment->claim->item->user_id !== auth()->id(), 403);
+        abort_if($payment->status !== 'pending', 400, 'Pembayaran ini sudah diproses.');
+        
         $payment->update(['status' => 'verified']);
         $payment->claim->update(['status' => 'approved']);
         
@@ -28,7 +30,20 @@ class PaymentVerifyController extends Controller
     public function reject(Payment $payment)
     {
         abort_if($payment->claim->item->user_id !== auth()->id(), 403);
+        abort_if($payment->status !== 'pending', 400, 'Pembayaran ini sudah diproses.');
+        
         $payment->update(['status' => 'rejected']);
-        return back()->with('success', 'Pembayaran ditolak.');
+        
+        $claim = $payment->claim;
+        if ($claim->status === 'pending') {
+            $claim->update(['status' => 'rejected']);
+            
+            $item = $claim->item;
+            $item->jumlah += $claim->jumlah;
+            $item->status = 'available';
+            $item->save();
+        }
+
+        return back()->with('success', 'Pembayaran ditolak. Klaim dibatalkan dan stok dikembalikan.');
     }
 }

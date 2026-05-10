@@ -59,7 +59,7 @@ class ItemController extends Controller
             'deskripsi' => $request->deskripsi,
             'status' => 'available',
             'tipe' => $request->tipe,
-            'harga' => $request->tipe === 'jual' ? $request->harga : 0,
+            'harga'           => $request->tipe === 'jual' ? (int) $request->harga : 0,
         ]);
 
         return redirect()->route('donatur.items.index')
@@ -81,7 +81,7 @@ class ItemController extends Controller
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'kategori' => 'required',
             'kategori_lainnya' => 'required_if:kategori,lainnya|nullable|string|max:255',
-            'jumlah' => 'required|integer|min:1',
+            'jumlah' => 'required|integer|min:0',
             'satuan' => 'required|string',
             'alamat' => 'required|string',
             'kota' => 'required|string',
@@ -91,8 +91,8 @@ class ItemController extends Controller
 
         $hasPendingClaims = $item->claims()->where('status', 'pending')->exists();
         if ($hasPendingClaims) {
-            if ($request->tipe !== $item->tipe || $request->harga != $item->harga) {
-                return back()->with('error', 'Tidak dapat mengubah tipe atau harga barang karena sedang ada transaksi/klaim yang berjalan.');
+            if ($request->tipe !== $item->tipe || $request->harga != $item->harga || $request->jumlah != $item->jumlah) {
+                return back()->with('error', 'Tidak dapat mengubah tipe, harga, atau jumlah stok karena sedang ada transaksi/klaim yang berjalan.');
             }
         }
 
@@ -103,6 +103,11 @@ class ItemController extends Controller
 
         if ($data['kategori'] !== 'lainnya') {
             $data['kategori_lainnya'] = null;
+        }
+
+        // Pastikan harga selalu tersimpan sebagai integer (hindari floating-point dari JS)
+        if (isset($data['harga'])) {
+            $data['harga'] = (int) $data['harga'];
         }
 
         $item->update($data);

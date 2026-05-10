@@ -48,6 +48,11 @@ class AdminController extends Controller
 
     public function deleteItem(Item $item)
     {
+        $hasActiveClaims = $item->claims()->whereIn('status', ['pending', 'approved'])->exists();
+        if ($hasActiveClaims) {
+            return back()->with('error', 'Tidak dapat menghapus barang yang memiliki klaim atau transaksi aktif.');
+        }
+
         $item->delete();
         return back()->with('success', 'Barang berhasil dihapus.');
     }

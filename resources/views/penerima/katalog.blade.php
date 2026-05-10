@@ -1,17 +1,5 @@
 <x-app-layout>
 
-{{-- Alert section --}}
-@if(session('success'))
-    <div class="bg-[#E9EFE3] text-[#2C4027] px-6 py-4 rounded-[20px] border border-[#43643C]/20 mb-8 font-semibold shadow-sm">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if(session('error'))
-    <div class="bg-red-100 text-red-700 px-6 py-4 rounded-[20px] border border-red-200 mb-8 font-semibold shadow-sm">
-        {{ session('error') }}
-    </div>
-@endif
 
 <style>
     .hide-scrollbar::-webkit-scrollbar { display: none; }

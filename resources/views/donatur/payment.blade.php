@@ -9,11 +9,6 @@
             <p class="text-[#7A9375] font-medium text-sm mt-1">Verifikasi bukti pembayaran dari penerima.</p>
         </div>
 
-        @if(session('success'))
-            <div class="bg-[#E9EFE3] text-[#2C4027] px-6 py-4 rounded-[24px] border border-[#43643C]/20 mb-8 font-semibold shadow-sm flex items-center gap-3">
-                <span class="text-lg">✅</span> {{ session('success') }}
-            </div>
-        @endif
 
         @if($payments->isEmpty())
             <div class="bg-white p-16 rounded-[40px] shadow-sm border border-[#E9EFE3] text-center">

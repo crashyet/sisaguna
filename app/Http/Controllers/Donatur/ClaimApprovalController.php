@@ -19,6 +19,7 @@ class ClaimApprovalController extends Controller
     public function approve(Claim $claim)
     {
         abort_if($claim->item->user_id !== auth()->id(), 403);
+        abort_if($claim->status !== 'pending', 400, 'Klaim ini sudah diproses sebelumnya.');
         
         $claim->update(['status' => 'approved']);
 
@@ -28,6 +29,7 @@ class ClaimApprovalController extends Controller
     public function reject(Claim $claim)
     {
         abort_if($claim->item->user_id !== auth()->id(), 403);
+        abort_if($claim->status !== 'pending', 400, 'Klaim ini sudah diproses sebelumnya.');
         $claim->update(['status' => 'rejected']);
         
         // Kembalikan stok karena klaim ditolak

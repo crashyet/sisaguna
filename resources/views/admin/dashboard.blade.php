@@ -1,10 +1,5 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6">
-        @if(session('success'))
-            <div class="bg-[#E9EFE3] text-[#2C4027] px-6 py-4 rounded-[24px] border border-[#43643C]/20 mb-8 font-semibold shadow-sm flex items-center gap-3">
-                <span>✅</span> {{ session('success') }}
-            </div>
-        @endif
 
         <!-- Hero Banner -->
         <div class="bg-[#2C4027] rounded-[40px] overflow-hidden relative mb-12 shadow-2xl shadow-[#2C4027]/20">

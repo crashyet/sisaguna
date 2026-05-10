@@ -77,9 +77,9 @@
             </div>
             
             <div class="md:w-2/5 h-64 md:h-auto relative w-full flex justify-end">
-                <!-- Placeholder Image (Abstract Shapes or Package) -->
-                <div class="w-full h-full bg-[#43643C]/5 flex items-center justify-center p-12">
-                    <div class="text-[120px] opacity-20 group-hover:scale-110 transition-transform">📦</div>
+                <div class="w-full h-full bg-[#43643C]/5 flex items-center justify-center p-12 relative overflow-hidden">
+                    <div class="absolute w-[500px] h-[500px] bg-white rounded-full blur-3xl opacity-50 -top-20 -right-20"></div>
+                    <div class="text-[120px] z-10 drop-shadow-2xl hover:scale-110 transition-transform duration-500">📦</div>
                 </div>
             </div>
         </div>

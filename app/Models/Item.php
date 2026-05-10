@@ -14,6 +14,7 @@ class Item extends Model
 
     protected $casts = [
         'expiry_date' => 'date',
+        'harga'       => 'integer',
     ];
 
     public function donatur()

@@ -7,12 +7,6 @@
             </div>
         </div>
 
-        @if(session('success'))
-            <div
-                class="bg-[#E9EFE3] text-[#2C4027] px-6 py-4 rounded-[24px] border border-[#43643C]/20 mb-8 font-semibold shadow-sm flex items-center gap-3">
-                <span>✨</span> {{ session('success') }}
-            </div>
-        @endif
 
         <div class="bg-white rounded-[40px] shadow-sm border border-[#E9EFE3] overflow-hidden p-2">
             <div class="overflow-x-auto">

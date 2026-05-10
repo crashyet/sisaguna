@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\Claim;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClaimController extends Controller
 {
@@ -18,34 +19,40 @@ class ClaimController extends Controller
 
         // User diizinkan melakukan klaim berkali-kali selama stok masih ada
 
-        $request->validate([
-            'alasan' => 'required|string|min:10|max:500',
-            'jumlah' => 'required|integer|min:1|max:' . $item->jumlah,
-        ]);
+        return DB::transaction(function () use ($request, $item) {
+            $lockedItem = Item::where('id', $item->id)->lockForUpdate()->first();
 
-        // Kurangi stok seketika untuk mencegah race condition (overselling)
-        $item->jumlah -= $request->jumlah;
-        if ($item->jumlah <= 0) {
-            $item->status = 'claimed';
-        }
-        $item->save();
+            if (!$lockedItem || $lockedItem->jumlah < $request->jumlah) {
+                return back()->with('error', 'Maaf, stok barang tidak mencukupi atau barang sudah habis.');
+            }
 
-        $claim = Claim::create([
-            'item_id' => $item->id,
-            'user_id' => auth()->id(),
-            'alasan'  => $request->alasan,
-            'jumlah'  => $request->jumlah,
-            'status'  => 'pending',
-        ]);
+            $request->validate([
+                'alasan' => 'required|string|min:10|max:500',
+                'jumlah' => 'required|integer|min:1|max:' . $lockedItem->jumlah,
+            ]);
 
-          // Kalau barang jual → langsung ke halaman pembayaran
-        if ($item->tipe === 'jual') {
-            return redirect()->route('penerima.payment.show', $claim)
-                             ->with('success', 'Pesanan dibuat! Silakan lakukan pembayaran.');
+            $lockedItem->jumlah -= $request->jumlah;
+            if ($lockedItem->jumlah <= 0) {
+                $lockedItem->status = 'claimed';
+            }
+            $lockedItem->save();
+
+            $claim = Claim::create([
+                'item_id' => $lockedItem->id,
+                'user_id' => auth()->id(),
+                'alasan'  => $request->alasan,
+                'jumlah'  => $request->jumlah,
+                'status'  => 'pending',
+            ]);
+
+            if ($lockedItem->tipe === 'jual') {
+                return redirect()->route('penerima.payment.show', $claim)
+                                 ->with('success', 'Pesanan dibuat! Silakan lakukan pembayaran.');
             }
 
             return redirect()->route('penerima.riwayat')
                              ->with('success', 'Klaim berhasil diajukan!');
+        });
     }
 
 

@@ -52,11 +52,6 @@ document.addEventListener('keydown', function(e) {
             <p class="text-[#7A9375] font-medium text-sm mt-1">Kelola permintaan klaim dari penerima donasi.</p>
         </div>
 
-        @if(session('success'))
-            <div class="bg-[#E9EFE3] text-[#2C4027] px-6 py-4 rounded-[24px] border border-[#43643C]/20 mb-8 font-semibold shadow-sm flex items-center gap-3">
-                <span class="text-lg">✅</span> {{ session('success') }}
-            </div>
-        @endif
 
         @if($claims->isEmpty())
             <div class="bg-white p-16 rounded-[40px] shadow-sm border border-[#E9EFE3] text-center">
@@ -124,18 +119,24 @@ document.addEventListener('keydown', function(e) {
 
                     <div class="mt-auto flex flex-wrap gap-3">
                         @if($claim->status === 'pending')
-                            <form action="{{ route('donatur.claims.approve', $claim) }}" method="POST" class="flex-1 min-w-[120px]">
-                                @csrf @method('PATCH')
-                                <button class="w-full bg-[#43643C] text-white py-3.5 rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:bg-[#2C4027] hover:-translate-y-1 transition-all shadow-lg shadow-[#43643C]/20">
-                                    Setujui
-                                </button>
-                            </form>
-                            <form action="{{ route('donatur.claims.reject', $claim) }}" method="POST" class="flex-1 min-w-[120px]">
-                                @csrf @method('PATCH')
-                                <button class="w-full bg-white border-2 border-[#E9EFE3] text-red-500 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:border-red-200 transition-colors">
-                                    Tolak
-                                </button>
-                            </form>
+                            @if($claim->item->tipe === 'donasi')
+                                <form action="{{ route('donatur.claims.approve', $claim) }}" method="POST" class="flex-1 min-w-[120px]">
+                                    @csrf @method('PATCH')
+                                    <button class="w-full bg-[#43643C] text-white py-3.5 rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:bg-[#2C4027] hover:-translate-y-1 transition-all shadow-lg shadow-[#43643C]/20">
+                                        Setujui
+                                    </button>
+                                </form>
+                                <form action="{{ route('donatur.claims.reject', $claim) }}" method="POST" class="flex-1 min-w-[120px]">
+                                    @csrf @method('PATCH')
+                                    <button class="w-full bg-white border-2 border-[#E9EFE3] text-red-500 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:border-red-200 transition-colors">
+                                        Tolak
+                                    </button>
+                                </form>
+                            @else
+                                <div class="w-full text-center bg-yellow-50 text-yellow-800 border border-yellow-200 py-3.5 rounded-[20px] text-[10px] font-black uppercase tracking-widest">
+                                    ⏳ Menunggu Pembayaran
+                                </div>
+                            @endif
                         @endif
 
                         {{-- Info Pembayaran Khusus Barang Jual --}}

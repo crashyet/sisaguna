@@ -29,9 +29,13 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/', function () {
     if (auth()->check()) {
-        auth()->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
+        $user = auth()->user();
+        return match($user->role) {
+            'donatur'  => redirect()->route('donatur.dashboard'),
+            'penerima' => redirect()->route('penerima.dashboard'),
+            'admin'    => redirect()->route('admin.dashboard'),
+            default    => view('welcome'),
+        };
     }
     return view('welcome');
 });
